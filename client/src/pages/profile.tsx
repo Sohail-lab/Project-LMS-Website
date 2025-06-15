@@ -12,11 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import store from "@/redux/store";
+import axios from "axios";
+import { setUser } from "@/redux/authSlice";
+import { toast } from "sonner";
 
 const Profile = () => {
 
+    const dispatch = useDispatch();
     const {user} = useSelector(store=>store.auth);
     const[input, setInput] = useState({
         name:user?.name,
@@ -38,7 +42,28 @@ const Profile = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        console.log(input);
+        const formData = new FormData();
+        formData.append("name", input.name);
+        formData.append("description", input.description);
+        if(input.file) {
+            formData.append("file", input.file);
+        }
+
+        try {
+            const res = await axios.put('http://localhost:3000/api/v1/user/profile/update', formData, {
+                headers: {
+                    "Content-Type":"multipart/form-data"
+                },
+                withCredentials:true
+            });
+            if(res.data.success) {
+                toast.success(res.data.message);
+                dispatch(setUser(res.data.user));
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     };
 
     return (
