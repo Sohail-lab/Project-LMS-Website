@@ -17,6 +17,7 @@ import store from "@/redux/store";
 import axios from "axios";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const Profile = () => {
 
@@ -27,6 +28,8 @@ const Profile = () => {
         description:user?.description,
         file:user?.photoUrl
     });
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const changeEventHandler = (e) => {
         const {name, value} = e.target;
@@ -50,6 +53,7 @@ const Profile = () => {
         }
 
         try {
+            setLoading(true);
             const res = await axios.put('http://localhost:3000/api/v1/user/profile/update', formData, {
                 headers: {
                     "Content-Type":"multipart/form-data"
@@ -57,12 +61,16 @@ const Profile = () => {
                 withCredentials:true
             });
             if(res.data.success) {
+                setOpen(false);
                 toast.success(res.data.message);
                 dispatch(setUser(res.data.user));
             }
         }
         catch(error) {
             console.log(error);
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -82,8 +90,8 @@ const Profile = () => {
                     <p className="text-gray-700 text-base leading-relaxed mb-3">
                         <span className="font-bold">Bio: </span> {user?.description || "n/a"}
                     </p>
-                    <Dialog>
-                        <DialogTrigger><Button className="bg-blue-500">Edit Profile</Button></DialogTrigger>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <Button onClick={()=>setOpen(true)} className="bg-blue-500">Edit Profile</Button>
                         <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
                                 <DialogTitle className="text-center">Change Profile</DialogTitle>
@@ -130,7 +138,10 @@ const Profile = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button onClick={submitHandler} className="bg-blue-500">Save Changes</Button>
+                                {
+                                    loading ? <Button className="bg-blue-400"><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Please wait </Button>
+                                    : <Button onClick={submitHandler} className="bg-blue-500">Save Changes</Button>
+                                }
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
