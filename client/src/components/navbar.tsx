@@ -1,7 +1,7 @@
 import { GraduationCap } from 'lucide-react';
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { setUser } from '@/redux/authSlice';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 const Navbar = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { user } = useSelector(store => store.auth);
 
     const logoutHandler = async (e) => {
@@ -16,6 +17,7 @@ const Navbar = () => {
         try {
             const res = await axios.get("http://localhost:3000/api/v1/user/logout", {withCredentials:true});
             if(res.data.success) {
+                navigate('/');
                 dispatch(setUser(null));
                 toast.success(res.data.message);
             }
@@ -51,9 +53,12 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className='flex items-center gap-7'>
+                                    {
+                                        user.role === "admin" && <Link to='/admin/dashboard'><li className='cursor-pointer'>Admin</li></Link>
+                                    }
                                     <Link to="/profile">
                                         <Avatar>
-                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarImage src={user.photoUrl} alt="@shadcn" />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
                                     </Link>

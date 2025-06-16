@@ -118,7 +118,7 @@ const Signup = () => {
                                 checked={user.role === 'academic-team'}
                                 onChange={handleChange}
                             />
-                            <Label htmlFor="role3">Academic Team</Label>
+                            <Label htmlFor="role3">AcadTeam</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Input

@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './utils/db.js';
 import userRoute from './routes/user.route.js'
+import projectRoute from './routes/project.route.js'
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -23,6 +24,7 @@ app.use(cors({
 
 // apis
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/project", projectRoute);
 
 app.listen(PORT, () => {
     connectDB();
