@@ -1,7 +1,4 @@
 import Navbar from "./components/navbar";
-import { Button } from "./components/ui/button";
-import React from "react";
-import Hero from "./components/hero";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Projects from "./pages/projects";
 import Home from "./pages/home";
